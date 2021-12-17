@@ -83,12 +83,14 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
 
                 // add black pawn
                 chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnBlack.obj", program) {
-                    scale = Vec3 (2, 2, 2)
+                    scale = Vec3 (2, 2, 2),
+                    position = Vec3 (0, 0.02f, 0)
                 });
 
                 // add white pawn
                 chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnWhite.obj", program) {
-                    scale = Vec3 (2, 2, 2)
+                    scale = Vec3 (2, 2, 2),
+                    position = Vec3 (0, 0.02f, 0)
                 });
 
 
