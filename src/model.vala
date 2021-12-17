@@ -42,6 +42,7 @@ public class Ch3.Model : Object {
                     // reset faces
                     faces = {};
                     material = null;
+                    mesh_id = null;
                 }
                 material = materials[mat_id];
             } else if (data.skip_symbol ("o")) {
@@ -51,6 +52,7 @@ public class Ch3.Model : Object {
                     // reset faces
                     faces = {};
                     material = null;
+                    mesh_id = null;
                 }
                 mesh_id = data.read_string ();
                 if (mesh_id.length == 0)        // object name is optional
@@ -120,6 +122,9 @@ public class Ch3.Model : Object {
         if (faces.length > 0) {
             var mesh = new Mesh (mesh_id ?? @"Mesh#$(meshes.length)", faces, program, material);
             meshes[mesh.id] = mesh;
+            faces = {};
+            material = null;
+            mesh_id = null;
         }
     }
 }
