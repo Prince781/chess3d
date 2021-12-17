@@ -1,0 +1,60 @@
+#version 300 es
+
+precision mediump float;
+
+out vec4 outColor;
+
+in vec2 TexCoord;
+in vec3 Normal;
+in vec3 FragPosition;
+
+// the color of the ambient light
+uniform vec3 AmbientColor;
+
+// position of the global light (TODO: have multiple lights)
+uniform vec3 LightPosition;
+// position of the scene camera
+uniform vec3 CameraPosition;
+
+// the strengths of the various lighting types
+uniform vec3 Ambient;
+uniform vec3 Diffuse;
+uniform vec3 Specular;
+
+uniform float SpecularCoeff;
+
+// the textures
+uniform bool HaveAmbientTex;
+uniform sampler2D AmbientTex;
+
+uniform bool HaveDiffuseTex;
+uniform sampler2D DiffuseTex;
+
+uniform bool HaveSpecularTex;
+uniform sampler2D SpecularTex;
+
+void main() {
+    vec3 ambient = AmbientColor * Ambient;
+
+    // direction to light
+    vec3 Li = normalize(LightPosition - FragPosition);
+    // direction to camera
+    vec3 v = normalize(CameraPosition - FragPosition);
+    // half vector (bisects Li and V)
+    vec3 h = (v + Li) / length(v + Li);
+
+    // diffuse lighting
+    vec3 diffuse = max(dot(Normal, Li), 0.0) * Diffuse;
+
+    // specular lighting
+    vec3 specular = pow(max(dot(Normal, h), 0.0), SpecularCoeff) * Specular;
+
+    if (HaveAmbientTex)
+        ambient *= vec3(texture(AmbientTex, TexCoord));
+    if (HaveDiffuseTex)
+        diffuse *= vec3(texture(DiffuseTex, TexCoord));
+    if (HaveSpecularTex)
+        specular *= vec3(texture(SpecularTex, TexCoord));
+
+    outColor = vec4(ambient + diffuse + specular, 1.0);
+}

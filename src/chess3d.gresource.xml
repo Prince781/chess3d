@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/com/github/prince781/Ch3/materials">
+        <file alias="ChessBoard.mtl">../data/models/ChessBoard.mtl</file>
+        <file alias="ChessPiecePawnBlack.mtl">../data/models/ChessPiecePawnBlack.mtl</file>
+        <file alias="Cube.mtl">../data/models/Cube.mtl</file>
+    </gresource>
+    <gresource prefix="/com/github/prince781/Ch3/models">
+        <file alias="ChessBoard.obj">../data/models/ChessBoard.obj</file>
+        <file alias="ChessPiecePawnBlack.obj">../data/models/ChessPiecePawnBlack.obj</file>
+        <file alias="Cube.obj">../data/models/Cube.obj</file>
+        <file alias="Icosphere.obj">../data/models/Icosphere.obj</file>
+        <file alias="Triangle.obj">../data/models/Triangle.obj</file>
+    </gresource>
+    <gresource prefix="/com/github/prince781/Ch3/textures">
+        <file alias="StoneMarbleCalacatta004_COL_1K.jpg">../data/textures/StoneMarbleCalacatta004_COL_1K.jpg</file>
+    </gresource>
+    <gresource prefix="/com/github/prince781/Ch3/shaders">
+        <file alias="shader.vert">shader.vert</file>
+        <file alias="shader.frag">shader.frag</file>
+    </gresource>
+</gresources>
