@@ -6,7 +6,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
 
     Model[] scene = {};
 
-    Vec3 ambient_color = Vec3 (0.1f, 0.1f, 0.1f);
+    Vec3 ambient_light = Vec3 (0.6f, 0.6f, 0.6f);
 
     // a single global light (TODO: multiple lights)
     Vec3 light_position = Vec3 (0.0f, 1.0f, 0.0f);
@@ -72,20 +72,25 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
 
             // now load the models
             try {
-                var chess_board = new Model ("/com/github/prince781/Ch3/models/ChessBoard.obj", program) {
+                const string model_dir = "/com/github/prince781/Ch3/models";
+
+                var chess_board = new Model (@"$model_dir/ChessBoard.obj", program) {
                     position = Vec3 (0, 0, -3),
                     // rotation = Vec3 (45, 45, 0),
                     scale = Vec3 (4, 4, 4)
                 };
-
-                var black_pawn = new Model ("/com/github/prince781/Ch3/models/ChessPiecePawnBlack.obj",
-                                            program) {
-                    scale = Vec3 (2, 2, 2)
-                };
-
-                chess_board.children.add (black_pawn);
-
                 scene += chess_board;
+
+                // add black pawn
+                chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnBlack.obj", program) {
+                    scale = Vec3 (2, 2, 2)
+                });
+
+                // add white pawn
+                chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnWhite.obj", program) {
+                    scale = Vec3 (2, 2, 2)
+                });
+
 
                 // var cube = new Model ("/com/github/prince781/Ch3/models/Cube.obj", program) {
                 //     position = Vec3 (2, 0, -5),
@@ -142,7 +147,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
             program.set_mat4x4 ("proj", ref projection_matrix);
 
             // ambient color and light position can vary throughout the scene
-            program.set_vec3 ("AmbientColor", ambient_color);
+            program.set_vec3 ("AmbientLight", ambient_light);
             program.set_vec3 ("LightPosition", light_position);
             // TODO: movable camera
             program.set_vec3 ("CameraPosition", Vec3 ());
@@ -188,7 +193,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
             // update the material
             if (mesh.material != null) {
                 // debug (@"mesh has $(mesh.material)");
-                program.set_vec3 ("Ambient", mesh.material.ambient_color);
+                program.set_vec3 ("AmbientColor", mesh.material.ambient_color);
                 if (mesh.material.ambient_texture != null) {
                     program.set_boolean ("HaveAmbientTex", GL.TRUE);
                     GL.active_texture (GL.TEXTURE0);
@@ -196,7 +201,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
                 } else {
                     program.set_boolean ("HaveAmbientTex", GL.FALSE);
                 }
-                program.set_vec3 ("Diffuse", mesh.material.ambient_color);
+                program.set_vec3 ("DiffuseColor", mesh.material.diffuse_color);
                 if (mesh.material.diffuse_texture != null) {
                     program.set_boolean ("HaveDiffuseTex", GL.TRUE);
                     GL.active_texture (GL.TEXTURE1);
@@ -204,7 +209,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
                 } else {
                     program.set_boolean ("HaveDiffuseTex", GL.FALSE);
                 }
-                program.set_vec3 ("Specular", mesh.material.ambient_color);
+                program.set_vec3 ("SpecularColor", mesh.material.specular_color);
                 program.set_float ("SpecularCoeff", mesh.material.specular_exponent);
                 if (mesh.material.specular_texture != null) {
                     program.set_boolean ("HaveSpecularTex", GL.TRUE);
@@ -221,9 +226,9 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
                 // GL.bind_texture (GL.TEXTURE_2D, 0);
                 // GL.active_texture (GL.TEXTURE2);
                 // GL.bind_texture (GL.TEXTURE_2D, 0);
-                program.set_vec3 ("Ambient", Vec3 ());
-                program.set_vec3 ("Diffuse", Vec3 ());
-                program.set_vec3 ("Specular", Vec3 ());
+                program.set_vec3 ("AmbientColor", Vec3 ());
+                program.set_vec3 ("DiffuseColor", Vec3 ());
+                program.set_vec3 ("SpecularColor", Vec3 ());
                 program.set_float ("SpecularCoeff", 0f);
                 program.set_boolean ("HaveAmbientTex", GL.FALSE);
                 program.set_boolean ("HaveDiffuseTex", GL.FALSE);

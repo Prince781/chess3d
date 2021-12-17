@@ -2,12 +2,13 @@
 <gresources>
     <gresource prefix="/com/github/prince781/Ch3/materials">
         <file alias="ChessBoard.mtl">../data/models/ChessBoard.mtl</file>
-        <file alias="ChessPiecePawnBlack.mtl">../data/models/ChessPiecePawnBlack.mtl</file>
+        <file alias="ChessPiece.mtl">../data/models/ChessPiece.mtl</file>
         <file alias="Cube.mtl">../data/models/Cube.mtl</file>
     </gresource>
     <gresource prefix="/com/github/prince781/Ch3/models">
         <file alias="ChessBoard.obj">../data/models/ChessBoard.obj</file>
         <file alias="ChessPiecePawnBlack.obj">../data/models/ChessPiecePawnBlack.obj</file>
+        <file alias="ChessPiecePawnWhite.obj">../data/models/ChessPiecePawnWhite.obj</file>
         <file alias="Cube.obj">../data/models/Cube.obj</file>
         <file alias="Icosphere.obj">../data/models/Icosphere.obj</file>
         <file alias="Triangle.obj">../data/models/Triangle.obj</file>

@@ -9,7 +9,7 @@ in vec3 Normal;
 in vec3 FragPosition;
 
 // the color of the ambient light
-uniform vec3 AmbientColor;
+uniform vec3 AmbientLight;
 
 // position of the global light (TODO: have multiple lights)
 uniform vec3 LightPosition;
@@ -17,9 +17,9 @@ uniform vec3 LightPosition;
 uniform vec3 CameraPosition;
 
 // the strengths of the various lighting types
-uniform vec3 Ambient;
-uniform vec3 Diffuse;
-uniform vec3 Specular;
+uniform vec3 AmbientColor;
+uniform vec3 DiffuseColor;
+uniform vec3 SpecularColor;
 
 uniform float SpecularCoeff;
 
@@ -34,7 +34,7 @@ uniform bool HaveSpecularTex;
 uniform sampler2D SpecularTex;
 
 void main() {
-    vec3 ambient = AmbientColor * Ambient;
+    vec3 ambient = AmbientLight * AmbientColor;
 
     // direction to light
     vec3 Li = normalize(LightPosition - FragPosition);
@@ -44,10 +44,10 @@ void main() {
     vec3 h = (v + Li) / length(v + Li);
 
     // diffuse lighting
-    vec3 diffuse = max(dot(Normal, Li), 0.0) * Diffuse;
+    vec3 diffuse = max(dot(Normal, Li), 0.0) * DiffuseColor;
 
     // specular lighting
-    vec3 specular = pow(max(dot(Normal, h), 0.0), SpecularCoeff) * Specular;
+    vec3 specular = pow(max(dot(Normal, h), 0.0), SpecularCoeff) * SpecularColor;
 
     if (HaveAmbientTex)
         ambient *= vec3(texture(AmbientTex, TexCoord));
