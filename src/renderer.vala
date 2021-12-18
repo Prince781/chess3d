@@ -7,6 +7,7 @@ public class Ch3.Renderer : Object {
 
     public Vec3 ambient_light { get; default = Vec3 (0.6f, 0.6f, 0.6f); }
     public Vec3 light_position { get; default = Vec3 (0.0f, 1.0f, 0.0f); }
+    public Model? selected_model { get; set; }
 
     // --- SCENE SETUP
     public void setup (Gtk.Widget widget) {
@@ -254,6 +255,8 @@ public class Ch3.Renderer : Object {
                 program.set_boolean ("HaveDiffuseTex", GL.FALSE);
                 program.set_boolean ("HaveSpecularTex", GL.FALSE);
             }
+
+            program.set_boolean ("Selected", model == selected_model ? GL.TRUE : GL.FALSE);
 
             // render the mesh vertices
             GL.bind_vertex_array (mesh.vao);

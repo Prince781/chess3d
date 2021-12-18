@@ -33,6 +33,9 @@ uniform sampler2D DiffuseTex;
 uniform bool HaveSpecularTex;
 uniform sampler2D SpecularTex;
 
+// other properties
+uniform bool Selected;
+
 void main() {
     vec3 ambient = AmbientLight * AmbientColor;
 
@@ -49,6 +52,7 @@ void main() {
     // specular lighting
     vec3 specular = pow(max(dot(Normal, h), 0.0), SpecularCoeff) * SpecularColor;
 
+    // textures
     if (HaveAmbientTex)
         ambient *= vec3(texture(AmbientTex, TexCoord));
     if (HaveDiffuseTex)
@@ -56,5 +60,8 @@ void main() {
     if (HaveSpecularTex)
         specular *= vec3(texture(SpecularTex, TexCoord));
 
-    outColor = vec4(ambient + diffuse + specular, 1.0);
+    vec3 color = ambient + diffuse + specular;
+    if (Selected)       // highlight the edges of the object if it's selected
+        color = mix(color, vec3(1.0, 0.0, 0.0), 1.0 - abs(dot(Normal, v)));
+    outColor = vec4(color, 1.0);
 }
