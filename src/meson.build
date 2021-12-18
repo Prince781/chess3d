@@ -12,6 +12,7 @@ sources = [
   'material.vala',
   'mesh.vala',
   'model.vala',
+  'renderer.vala',
   'texture2d.vala',
   'utf8inputstream.vala',
   'vec2.vala',
