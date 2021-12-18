@@ -3,7 +3,7 @@
  */
 public class Ch3.Renderer : Object {
     public GL.Program program { get; private set; }
-    Model[] scene = {};
+    public GenericSet<Model> scene { get; default = new GenericSet<Model> (null, null); }
 
     public Vec3 ambient_light { get; default = Vec3 (0.6f, 0.6f, 0.6f); }
     public Vec3 light_position { get; default = Vec3 (0.0f, 1.0f, 0.0f); }
@@ -57,20 +57,20 @@ public class Ch3.Renderer : Object {
         try {
             const string model_dir = "/com/github/prince781/Ch3/models";
 
-            var chess_board = new Model (@"$model_dir/ChessBoard.obj", program) {
+            var chess_board = new Model ("Chess Board", @"$model_dir/ChessBoard.obj", program) {
                 position = Vec3 (0, 0, -1),
                 scale = Vec3 (4, 4, 4)
             };
-            scene += chess_board;
+            scene.add (chess_board);
 
             // add black pawn
-            chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnBlack.obj", program) {
+            chess_board.children.add (new Model ("Black Pawn", @"$model_dir/ChessPiecePawnBlack.obj", program) {
                 scale = Vec3 (2, 2, 2),
                 position = Vec3 (0, 0.01f, 0)
             });
 
             // add white pawn
-            chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnWhite.obj", program) {
+            chess_board.children.add (new Model ("White Pawn", @"$model_dir/ChessPiecePawnWhite.obj", program) {
                 scale = Vec3 (2, 2, 2),
                 position = Vec3 (0, 0.01f, 0)
             });
@@ -98,7 +98,7 @@ public class Ch3.Renderer : Object {
         var frame_clock = (!)area.get_frame_clock ();       // widget is realized
         frame_clock.update.connect (frame_clock => {
             int64 frame_time = frame_clock.get_frame_time ();
-            foreach (var model in scene) {
+            scene.foreach (model => {
                 // animate position
                 var anim_position = model.position;
                 if (model.position_x_anim != null) {
@@ -143,7 +143,7 @@ public class Ch3.Renderer : Object {
 
                 model.position = anim_position;
                 model.rotation = anim_rotation;
-            }
+            });
         });
     }
 
@@ -183,9 +183,7 @@ public class Ch3.Renderer : Object {
         // debug (@"projection matrix:\n$projection_matrix");
 
         // iterate over all objects in scene
-        foreach (var model in scene) {
-            render_model (model, Mat4x4.identity ());
-        }
+        scene.foreach (model => render_model (model, Mat4x4.identity ()));
 
         // clear the viewport
         GL.flush ();
@@ -266,5 +264,41 @@ public class Ch3.Renderer : Object {
 
         // now render all children
         model.children.foreach (child => render_model (child, model_matrix));
+    }
+
+    public void fill_scene_objects (ListStore list, Model? parent = null) {
+        if (parent == null) {
+            scene.foreach (model => {
+                list.append (model);
+                fill_scene_objects (list, model);
+            });
+        } else {
+            parent.children.foreach (child => {
+                list.append (child);
+                fill_scene_objects (list, child);
+            });
+        }
+    }
+
+    public Model? find_by_name (string name, Model? parent = null) {
+        Model? found = null;
+
+        if (parent == null) {
+            scene.foreach (model => {
+                if (model.name == name)
+                    found = model;
+                if (found == null)
+                    found = find_by_name (name, model);
+            });
+        } else {
+            parent.children.foreach (child => {
+                if (child.name == name)
+                    found = child;
+                if (found == null)
+                    found = find_by_name (name, child);
+            });
+        }
+
+        return found;
     }
 }

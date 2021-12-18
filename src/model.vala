@@ -21,12 +21,16 @@ public class Ch3.Model : Object {
 
     public GenericSet<Model> children { get; default = new GenericSet<Model> (null, null); }
 
+    public string name { get; set; }
+
     /**
      * Construct a model from a Wavefront object.
      *
      * @param path      GResource path
      */
-    public Model (string path, GL.Program program) throws Error {
+    public Model (string name, string path, GL.Program program) throws Error {
+        this.name = name;
+
         var data = new Utf8InputStream (resources_open_stream (path, ResourceLookupFlags.NONE));
         Vec3[] vertices = {};           // all the vertices in the .obj
         Vec2[] uvs = {};                // all the UVs in the .obj
