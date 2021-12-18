@@ -1,9 +1,6 @@
 public class Ch3.MainWindow : Gtk.ApplicationWindow {
     GL.Program program { get; private set; }
 
-    int64 t_start = get_monotonic_time ();
-    int64 interval_us = 10 * 1000 * 1000;
-
     Model[] scene = {};
 
     Vec3 ambient_light = Vec3 (0.6f, 0.6f, 0.6f);
@@ -75,8 +72,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
                 const string model_dir = "/com/github/prince781/Ch3/models";
 
                 var chess_board = new Model (@"$model_dir/ChessBoard.obj", program) {
-                    position = Vec3 (0, 0, -3),
-                    // rotation = Vec3 (45, 45, 0),
+                    position = Vec3 (0, 0, -1),
                     scale = Vec3 (4, 4, 4)
                 };
                 scene += chess_board;
@@ -84,21 +80,20 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
                 // add black pawn
                 chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnBlack.obj", program) {
                     scale = Vec3 (2, 2, 2),
-                    position = Vec3 (0, 0.02f, 0)
+                    position = Vec3 (0, 0.01f, 0)
                 });
 
                 // add white pawn
                 chess_board.children.add (new Model (@"$model_dir/ChessPiecePawnWhite.obj", program) {
                     scale = Vec3 (2, 2, 2),
-                    position = Vec3 (0, 0.02f, 0)
+                    position = Vec3 (0, 0.01f, 0)
                 });
 
-
-                // var cube = new Model ("/com/github/prince781/Ch3/models/Cube.obj", program) {
-                //     position = Vec3 (2, 0, -5),
-                //     scale = Vec3 (0.5f, 0.5f, 0.5f)
-                // };
-                // scene += cube;
+                // create animations moving the chess board into view:
+                // - add an animation (move z from -1 -> -3 over 1.6s)
+                chess_board.position_z_anim = new Animation (-1, -3, 1.6f);
+                // - add animation (rotate 45 deg along x axis)
+                chess_board.rotation_x_anim = new Animation (0, 45f, 1.6f);
             } catch (Error e) {
                 printerr ("ERROR: %s\n", e.message);
                 app.quit ();
@@ -106,19 +101,63 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
             }
             debug ("loaded models");
 
-            // establish a tick callback for rendering
+            // establish a tick callback for queueing rendering
             area.add_tick_callback ((widget, frame_clock) => {
-                // update the model's position
-                // TODO: use frame_clock.get_frame_time ()
-                int64 t_delta = get_monotonic_time () - t_start;
-
-                // for DEBUG purposes
-                foreach (var model in scene)
-                    model.rotation = Vec3 (45, 45 * Math.sinf((float)Math.PI * 2 * (t_delta % interval_us) / (float)interval_us), 0);
-
                 // queue redraw
                 widget.queue_draw ();
                 return Source.CONTINUE;
+            });
+
+            // update the animations precisely on each frame
+            var frame_clock = (!)area.get_frame_clock ();       // widget is realized
+            frame_clock.update.connect (frame_clock => {
+                int64 frame_time = frame_clock.get_frame_time ();
+                foreach (var model in scene) {
+                    // animate position
+                    var anim_position = model.position;
+                    if (model.position_x_anim != null) {
+                        model.position_x_anim.update (frame_time);
+                        anim_position.x = model.position_x_anim.current_val;
+                        if (model.position_x_anim.finished)
+                            model.position_x_anim = null;
+                    }
+                    if (model.position_y_anim != null) {
+                        model.position_y_anim.update (frame_time);
+                        anim_position.y = model.position_y_anim.current_val;
+                        if (model.position_y_anim.finished)
+                            model.position_y_anim = null;
+                    }
+                    if (model.position_z_anim != null) {
+                        model.position_z_anim.update (frame_time);
+                        anim_position.z = model.position_z_anim.current_val;
+                        if (model.position_z_anim.finished)
+                            model.position_z_anim = null;
+                    }
+
+                    // animate rotation
+                    var anim_rotation = model.rotation;
+                    if (model.rotation_x_anim != null) {
+                        model.rotation_x_anim.update (frame_time);
+                        anim_rotation.x = model.rotation_x_anim.current_val;
+                        if (model.rotation_x_anim.finished)
+                            model.rotation_x_anim = null;
+                    }
+                    if (model.rotation_y_anim != null) {
+                        model.rotation_y_anim.update (frame_time);
+                        anim_rotation.y = model.rotation_y_anim.current_val;
+                        if (model.rotation_y_anim.finished)
+                            model.rotation_y_anim = null;
+                    }
+                    if (model.rotation_z_anim != null) {
+                        model.rotation_z_anim.update (frame_time);
+                        anim_rotation.z = model.rotation_z_anim.current_val;
+                        if (model.rotation_z_anim.finished)
+                            model.rotation_z_anim = null;
+                    }
+
+                    model.position = anim_position;
+                    model.rotation = anim_rotation;
+                }
             });
         });
 

@@ -1,3 +1,6 @@
+/**
+ * An object in the scene.
+ */
 public class Ch3.Model : Object {
     public HashTable<string, Mesh> meshes { get; default = new HashTable<string, Mesh> (str_hash, str_equal); }
     public HashTable<string, Material> materials { get; default = new HashTable<string, Material> (str_hash, str_equal); }
@@ -5,6 +8,16 @@ public class Ch3.Model : Object {
     public Vec3 position { get; set; }
     public Vec3 rotation { get; set; }
     public Vec3 scale { get; set; default = Vec3 (1.0f, 1.0f, 1.0f); }
+
+    // --- animating the position
+    public Animation? position_x_anim { get; set; }
+    public Animation? position_y_anim { get; set; }
+    public Animation? position_z_anim { get; set; }
+
+    // --- animating the rotation 
+    public Animation? rotation_x_anim { get; set; }
+    public Animation? rotation_y_anim { get; set; }
+    public Animation? rotation_z_anim { get; set; }
 
     public GenericSet<Model> children { get; default = new GenericSet<Model> (null, null); }
 
