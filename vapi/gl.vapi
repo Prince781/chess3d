@@ -9639,6 +9639,9 @@ namespace GL {
         [CCode (cheader_filename = "epoxy/gl.h", cname = "glFlush")]
         public void flush ();
 
+        [CCode (cheader_filename = "epoxy/gl.h", cname = "glFinish")]
+        public void finish ();
+
         /**
          * Generates a new vertex buffer object.
          *

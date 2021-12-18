@@ -31,8 +31,3 @@ $ meson build
 $ ninja -C build
 $ build/chess3d
 ```
-
-### Caveats
-
-Unfortunately there are some rendering bugs introduced at the last moment that
-I could not fix.

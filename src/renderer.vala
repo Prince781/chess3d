@@ -187,6 +187,9 @@ public class Ch3.Renderer : Object {
 
         // clear the viewport
         GL.flush ();
+
+        // ensure the frame buffer contents are completely updated in this
+        GL.finish ();
         return Source.CONTINUE;
     }
 
