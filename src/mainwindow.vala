@@ -235,7 +235,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
             vbox.append (x_field);
 
             var y_field = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
-            y_field.append (new Gtk.Label ("X") {
+            y_field.append (new Gtk.Label ("Y") {
                 xalign = 0,
                 halign = Gtk.Align.START,
                 valign = Gtk.Align.CENTER,
