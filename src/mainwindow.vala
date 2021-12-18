@@ -10,7 +10,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
 
     public MainWindow (Gtk.Application app) {
         Object (application: app,
-                default_width: 640, default_height: 640,
+                default_width: 800, default_height: 640,
                 title: "Chess 3D");
 
         var header = new Gtk.HeaderBar ();
@@ -22,6 +22,8 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
             use_es = true,
             has_depth_buffer = true,
             // has_stencil_buffer = true
+            width_request = 640,
+            height_request = 640
         };
 
         // --- SCENE SETUP ---
