@@ -40,6 +40,40 @@ public struct Ch3.Mat4x4 {
         this[3, 2] = -1;
     }
 
+    /**
+     * Constructs a transformation matrix for a camera looking at `target` from
+     * `position`.
+     *
+     * @param position  the position of the camera
+     * @param target    what the camera is looking at
+     * @param up        a direction that represents "up"
+     */
+    public Mat4x4.look_at (Vec3 position, Vec3 target, Vec3 up) {
+        // see https://learnopengl.com/Getting-started/Camera
+
+        up = up.normalized ();
+        var direction = position.subtract (target).normalized ();
+        var right = up.cross (direction).normalized ();
+        up = direction.cross (right).normalized ();
+
+        this[0, 0] = right.x;
+        this[0, 1] = right.y;
+        this[0, 2] = right.z;
+        this[0, 3] = right.x * (-position.x) + right.y + (-position.y) + right.z * (-position.z);
+
+        this[1, 0] = up.x;
+        this[1, 1] = up.y;
+        this[1, 2] = up.z;
+        this[1, 3] = up.x * (-position.x) + up.y * (-position.y) + up.z * (-position.z);
+
+        this[2, 0] = direction.x;
+        this[2, 1] = direction.y;
+        this[2, 2] = direction.z;
+        this[2, 3] = direction.x * (-position.x) + direction.y * (-position.y) + direction.z * (-position.z);
+
+        this[3, 3] = 1;
+    }
+
     public void set (int row, int col, float value) {
         data[col*4 + row] = value;
     }

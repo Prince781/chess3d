@@ -6,6 +6,7 @@ resources = gnome.compile_resources('com.github.prince781.Ch3', files('chess3d.g
 sources = [
   resources,
   'animation.vala',
+  'camera.vala',
   'main.vala',
   'mainwindow.vala',
   'mat4x4.vala',

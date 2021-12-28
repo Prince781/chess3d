@@ -8,6 +8,7 @@ public class Ch3.Renderer : Object {
     public Vec3 ambient_light { get; default = Vec3 (0.6f, 0.6f, 0.6f); }
     public Vec3 light_position { get; default = Vec3 (0.0f, 1.0f, 0.0f); }
     public Model? selected_model { get; set; }
+    public Camera main_camera { get; set; default = new Camera (Vec3 (0, 0, 1)); }
 
     // --- SCENE SETUP
     public void setup (Gtk.Widget widget) {
@@ -166,18 +167,17 @@ public class Ch3.Renderer : Object {
         float aspect_ratio = area.get_allocated_width () / (float) area.get_allocated_height ();
         var projection_matrix = Mat4x4.perspective ((float)Math.PI_4, aspect_ratio, 0.1f, 1000f);
 
-        // TODO: construct view matrix from camera
-        var view_matrix = Mat4x4.identity ().translate (0, 0, -1);
+        // construct view matrix from camera
+        var view_matrix = Mat4x4.look_at (main_camera.position, main_camera.position.add (main_camera.direction), Vec3 (0, 1, 0));
 
-        // TODO: get view from camera position and rotation
+        // get view from camera position and rotation
         program.set_mat4x4 ("view", ref view_matrix);
         program.set_mat4x4 ("proj", ref projection_matrix);
 
         // ambient color and light position can vary throughout the scene
         program.set_vec3 ("AmbientLight", ambient_light);
         program.set_vec3 ("LightPosition", light_position);
-        // TODO: movable camera
-        program.set_vec3 ("CameraPosition", Vec3 ());
+        program.set_vec3 ("CameraPosition", main_camera.position);
 
         // debug (@"view matrix:\n$view_matrix");
         // debug (@"projection matrix:\n$projection_matrix");
