@@ -195,8 +195,8 @@ public class Ch3.Renderer : Object {
 
     /**
      * This is a recursive procedure because we want to render each child in a
-     * model hierarchy hierarchy with a model transform that is relative to the
-     * parent model.
+     * model hierarchy with a model transform that is relative to the parent
+     * model.
      */
     void render_model (Model model, Mat4x4 parent_model_matrix) {
         // construct a model matrix from the up-to-date transform
