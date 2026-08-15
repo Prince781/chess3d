@@ -9618,7 +9618,11 @@ namespace GL {
         [SimpleType]
         public struct VertexAttribute : Attribute {
             [CCode (cheader_filename = "epoxy/gl.h", cname = "glVertexAttribPointer")]
-            public void pointer (int size, GLenum type, boolean normalized = GL.FALSE, sizei stride = 0, sizeiptr offset = 0);
+            void _glVertexAttribPointer (int size, GLenum type, boolean normalized = GL.FALSE, sizei stride = 0, void *offset = null);
+
+			public inline void pointer(int size, GLenum type, boolean normalized = GL.FALSE, sizei stride = 0, sizeiptr offset = 0) {
+				_glVertexAttribPointer (size, type, normalized, stride, (void *)offset);
+			}
 
             [CCode (cheader_filename = "epoxy/gl.h", cname = "glEnableVertexAttribArray")]
             public void enable_array ();

@@ -164,7 +164,7 @@ public class Ch3.Renderer : Object {
         GL.clear (GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
 
         // update transformation
-        float aspect_ratio = area.get_allocated_width () / (float) area.get_allocated_height ();
+        float aspect_ratio = area.get_width () / (float) area.get_height ();
         var projection_matrix = Mat4x4.perspective ((float)Math.PI_4, aspect_ratio, 0.1f, 1000f);
 
         // construct view matrix from camera
