@@ -28,6 +28,9 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
             height_request = 640
         };
 
+        // require OpenGL ES 3.0
+        area.set_required_version (3, 0);
+
         // set up renderer
         area.realize.connect (renderer.setup);
         area.render.connect (renderer.render);
