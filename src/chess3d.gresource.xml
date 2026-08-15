@@ -17,6 +17,7 @@
         <file alias="StoneMarbleCalacatta004_COL_1K.jpg">../data/textures/StoneMarbleCalacatta004_COL_1K.jpg</file>
     </gresource>
     <gresource prefix="/com/github/prince781/Ch3/shaders">
+        <file alias="picker.frag">picker.frag</file>
         <file alias="shader.vert">shader.vert</file>
         <file alias="shader.frag">shader.frag</file>
     </gresource>

@@ -34,6 +34,12 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
         // set up renderer
         area.realize.connect (renderer.setup);
         area.render.connect (renderer.render);
+        area.resize.connect (renderer.resize);
+
+        // handle clicks
+        var click_controller = new Gtk.GestureClick ();
+        click_controller.pressed.connect (renderer.handle_click);
+        area.add_controller (click_controller);
 
         var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
         box.append (area);
@@ -98,7 +104,7 @@ public class Ch3.MainWindow : Gtk.ApplicationWindow {
                 if (row == null)
                     renderer.selected_model = null;
                 else {
-                    Model? found = renderer.find_by_name (((Gtk.Label)row.child).label);
+                    Model? found = renderer.find<string> (((Gtk.Label)row.child).label, (model, name) => model.name == name);
                     renderer.selected_model = found;
                     if (found != null)
                         debug_object (found);

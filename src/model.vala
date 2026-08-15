@@ -21,7 +21,11 @@ public class Ch3.Model : Object {
 
     public GenericSet<Model> children { get; default = new GenericSet<Model> (null, null); }
 
-    public string name { get; set; }
+    public string name { get; construct; }
+
+    private static uint next_id = 0;
+
+    public uint id { get; construct; }
 
     /**
      * Construct a model from a Wavefront object.
@@ -29,7 +33,9 @@ public class Ch3.Model : Object {
      * @param path      GResource path
      */
     public Model (string name, string path, GL.Program program) throws Error {
-        this.name = name;
+        Object (name: name, id: ++next_id);
+
+        debug ("created Model \"%s\" with ID %u", name, id);
 
         var data = new Utf8InputStream (resources_open_stream (path, ResourceLookupFlags.NONE));
         Vec3[] vertices = {};           // all the vertices in the .obj

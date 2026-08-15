@@ -9459,11 +9459,11 @@ namespace GL {
         [CCode (cheader_filename = "epoxy/gl.h", cname = "glBufferData")]
         void glBufferData (GLenum target, sizeiptr size, GLvoid *data, GLenum usage);
 
-        public void buffer_floats (GLenum target, float[] data, GLenum usage) {
+        public inline void buffer_floats (GLenum target, float[] data, GLenum usage) {
             glBufferData (target, data.length * sizeof(float), data, usage);
         }
 
-        public void buffer_ints (GLenum target, int[] data, GLenum usage) {
+        public inline void buffer_ints (GLenum target, int[] data, GLenum usage) {
             glBufferData (target, data.length * sizeof(int), data, usage);
         }
 
@@ -9578,6 +9578,11 @@ namespace GL {
                 uniform.set_1i (value);
             }
 
+			public void set_uint (string name, uint value) {
+				Uniform uniform = get_uniform_location (name);
+				uniform.set_1ui (value);
+			}
+
             public void set_float (string name, float value) {
                 Uniform uniform = get_uniform_location (name);
                 uniform.set_1f (value);
@@ -9609,6 +9614,9 @@ namespace GL {
 
             [CCode (cheader_filename = "epoxy/gl.h", cname = "glUniform1i")]
             public void set_1i (int value);
+
+            [CCode (cheader_filename = "epoxy/gl.h", cname = "glUniform1ui")]
+            public void set_1ui (uint value);
 
             [CCode (cheader_filename = "epoxy/gl.h", cname = "glUniform1f")]
             public void set_1f (float value);
@@ -9699,11 +9707,128 @@ namespace GL {
         [CCode (cheader_filename = "epoxy/gl.h", cname = "glGenerateMipmap")]
         public void generate_mipmap (GLenum target);
 
-        [CCode (cheader_filename = "epoxy/gl.h", cname = "glGetError")]
-        public GLenum get_error ();
 
-        [CCode (cheader_filename = "epoxy/gl.h", cname = "glGetString")]
-        public unowned string? get_string (GLenum name);
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "GLuint", has_type_id = false)]
+	[SimpleType]
+	struct Renderbuffer : uint {
+		[CCode (cname = "(GLuint)")]
+		private Renderbuffer.from_raw (uint value);
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glGenRenderbuffers")]
+		static void _glGenRenderbuffers (ref Renderbuffer id, [CCode (pos = 0.9)] sizei n = 1);
+
+		public Renderbuffer () {
+			this.from_raw (0);
+			_glGenRenderbuffers (ref this);
+		}
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glBindRenderbuffer")]
+		static void _glBindRenderbuffer (Renderbuffer buffer, [CCode (pos = 0.9)] GLenum target = GL.RENDERBUFFER);
+
+		public void bind () {
+			_glBindRenderbuffer (this);
+		}
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glFramebufferRenderbuffer")]
+		static void _glFramebufferRenderbuffer (GLenum target, GLenum attachment, GLenum renderbuffertarget, Renderbuffer renderbuffer);
+
+		/**
+		 * Attaches this Renderbuffer to the currently-bound Framebuffer.
+		 * {@link Framebuffer.bind} must be called first.
+		 *
+		 * @param attachment     The type of attachment this Renderbuffer is.
+		 *
+		 * @see Framebuffer.bind
+		 */
+		public void attach_to_current_framebuffer (GLenum attachment) {
+			_glFramebufferRenderbuffer (GL.FRAMEBUFFER, attachment, GL.RENDERBUFFER, this);
+		}
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glRenderbufferStorage")]
+		static void _glRenderbufferStorage (GLenum target, GLenum internalformat, sizei width, sizei height);
+
+		public void storage (GLenum internalformat, sizei width, sizei height) {
+			_glRenderbufferStorage (GL.RENDERBUFFER, internalformat, width, height);
+		}
+	}
+
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "GLuint", has_type_id = false)]
+	[SimpleType]
+	struct Framebuffer : uint {
+		[CCode (cname = "(GLuint)")]
+		private Framebuffer.from_raw (uint value);
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glGenFramebuffers")]
+		static void _glGenFramebuffers (ref Framebuffer id, [CCode (pos = 0.9)] sizei n = 1);
+
+		public Framebuffer () {
+			this.from_raw (0);
+			_glGenFramebuffers (ref this);
+		}
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glBindFramebuffer")]
+		static void _glBindFramebuffer (Framebuffer buffer, [CCode (pos = 0.9)] GLenum target = GL.FRAMEBUFFER);
+
+		public void bind () {
+			_glBindFramebuffer (this);
+		}
+
+		[CCode (cheader_filename = "epoxy/gl.h", cname = "glClearBufferuiv")]
+		static void _glClearBufferuiv (GLenum buffer, int drawbuffer, [CCode (array_length = false)] uint[] value);
+
+		/**
+		 * Clears an unsigned-integer draw buffer of the currently-bound Framebuffer.
+		 * {@link Framebuffer.bind} must be called first.
+		 * A color clear value always has four components, even when the attachment
+		 * stores fewer components (for example, R32UI only stores value[0]).
+		 */
+		public static inline void clear_buffer_uiv (GLenum buffer, int drawbuffer, uint[] value)
+			requires (value.length >= 4)
+		{
+			_glClearBufferuiv (buffer, drawbuffer, value);
+		}
+	}
+
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "GLenum", cprefix = "GL_", has_type_id = false)]
+	public enum PixelFormat {
+		STENCIL_INDEX,
+		DEPTH_COMPONENT,
+		DEPTH_STENCIL,
+		RED,
+		GREEN,
+		BLUE,
+		RGB,
+		BGR,
+		RGBA,
+		RGBA_INTEGER,
+		BGRA
+	}
+
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "GLenum", cprefix = "GL_", has_type_id = false)]
+	public enum PixelType {
+		UNSIGNED_BYTE,
+		UNSIGNED_INT,
+		INT,
+		FLOAT,
+		UNSIGNED_INT_2_10_10_10_REV
+	}
+
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "glReadPixels")]
+	void _glReadPixels (int x, int y, sizei width, sizei height, PixelFormat format, PixelType type, [CCode (array_length = false)] uint[] data);
+
+	public inline uint[] read_pixels_uint (int x, int y, sizei width, sizei height, PixelFormat format, PixelType type)
+		requires (width >= 1 && height >= 1)
+	{
+		var data = new uint[width * height * 4];
+		_glReadPixels (x, y, width, height, format, type, data);
+		return data;
+	}
+
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "glGetError")]
+	public GLenum get_error ();
+
+	[CCode (cheader_filename = "epoxy/gl.h", cname = "glGetString")]
+	public unowned string? get_string (GLenum name);
 
 	[CCode (cheader_filename = "epoxy/gl.h", cname = "GLDEBUGPROC", has_target = true, delegate_target_pos = -1, delegate_target_cname = "userParam")]
 	public delegate void DebugProc (GLenum source, GLenum type, uint id, GLenum severity, sizei length, string message);
